@@ -129,9 +129,22 @@ Point* find_lowest_point(PointSet* ps){
 }
 
 
-// TODO
-PointSet* sort_by_angle(PointSet* ps){
-    printf("UNIMPLEMENTED\n");
+/**
+ * Merge Sort implementation for sorting points by their angles
+ * 
+ * @params: points  -> point array to sort by angle
+ * @params: left    -> starting point for left subArray
+ * @params: right   -> starting point for right subArray
+ * @return: void
+ */
+void sort_by_angle(Point* points, int left, int right){
+    if (left < right) { 
+        int center = left+(right-left)/2; 
+        sort_by_angle(points, left, center); 
+        sort_by_angle(points, center+1, right); 
+  
+        merge_halves(points, left, center, right); 
+    } 
 }
 
 
@@ -147,8 +160,8 @@ PointSet* sort_by_angle(PointSet* ps){
  */
 void merge_halves(Point* points, int left, int center, int right){
     int i, j, k;
-    int n1 = middle - left + 1;
-    int n2 = right - middle;
+    int n1 = center - left + 1;
+    int n2 = right - center;
 
     Point* tempP1 = malloc(n1*sizeof(Point));
     Point* tempP2 = malloc(n2*sizeof(Point));
@@ -156,7 +169,7 @@ void merge_halves(Point* points, int left, int center, int right){
         tempP1[i] = points[left + i];
     }
     for(j = 0; j< n2; j++){
-        tempP2[i] = points[middle + left + j]
+        tempP2[i] = points[center + left + j];
     }
 
     i = 0;
@@ -164,7 +177,7 @@ void merge_halves(Point* points, int left, int center, int right){
     k = left;
 
     while(i < n1 && j< n2){
-        if(tempP1[i] <= tempP2[j]){
+        if(tempP1[i].angle <= tempP2[j].angle){
             points[k] = tempP1[i];
             i++;
         }

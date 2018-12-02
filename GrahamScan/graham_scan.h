@@ -41,7 +41,7 @@ GS_Turn find_turn_type(Point* p1, Point* p2, Point* p3);
 
 Point* find_lowest_point(PointSet* ps);
 
-PointSet* sort_by_angle(PointSet* ps);
+void sort_by_angle(Point* points, int left, int right);
 
 PointSet* compute_convex_hull(PointSet* ps);
 
