@@ -21,5 +21,7 @@ void print_points(PointSet* ps);
 
 void print_points_to_file(PointSet* ps, char* file_name);
 
+int compare_point_sets(PointSet* ps1, PointSet* ps2);
+
 
 #endif
