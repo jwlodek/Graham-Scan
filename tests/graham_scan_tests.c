@@ -28,7 +28,7 @@ void teardown_parse(void){
 }
 
 Test(asserts, parse_input_test, .init = setup_parse, .fini = teardown_parse){
-    PointSet* ps = parse_input_file("../grahaminput1.txt");
+    PointSet* ps = parse_input_file("./inputs/graham_input1.txt");
     int eq = compare_point_sets(ps, ps1);
     cr_assert(eq == 0, "Parsed point set not equal");
 }
