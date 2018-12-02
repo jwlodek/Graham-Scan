@@ -108,6 +108,27 @@ GS_Turn find_turn_type(Point* p1, Point* p2, Point* p3){
 
 
 /**
+ * Function that finds the minimum point by y-coordinate
+ * If there is a tie, it finds the min x-coordinate as well
+ * 
+ * @params: ps -> input point set
+ * @return: lowest point by y-coord
+ */
+Point* find_lowest_point(PointSet* ps){
+    Point* p = ps->points;
+    int i;
+    for(i = 0; i < ps->num_points; i++){
+        if((ps->points+i)->yCoord <= p->yCoord){
+            if((ps->points+i)->xCoord < p->xCoord){
+                p = ps->points+i;
+            }
+        }
+    }
+    return p;
+}
+
+
+/**
  * Function that compares the contents of two point sets
  * Used primarily for testing
  * 

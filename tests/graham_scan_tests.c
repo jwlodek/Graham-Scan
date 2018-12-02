@@ -20,7 +20,7 @@ PointSet* ps1;
 PointSet* ps2;
 PointSet* ps3;
 
-/* Setup and teardown for file parsing test */
+/* Setup and teardown functions */
 void setup_parse(void){
     //printf("Creating test point set\n");
     ps1 = (PointSet*) calloc(1, sizeof(PointSet));
@@ -34,11 +34,18 @@ void setup_parse(void){
     (ps1->points+2)->yCoord = 221;
 }
 
+void setup_general(void){
+    //printf("Creating test point set\n");
+    ps1 = parse_input_file("./inputs/graham_input2.txt");
+}
+
 void teardown_general(void){
     //printf("Freeing test point set\n");
     free(ps1->points);
     free(ps1);
 }
+
+/* ------------------------Unit Tests---------------------------------*/
 
 /* File parsing test */
 Test(asserts, parse_input_test, .init = setup_parse, .fini = teardown_general){
@@ -48,12 +55,7 @@ Test(asserts, parse_input_test, .init = setup_parse, .fini = teardown_general){
 }
 
 
-void setup_general(void){
-    //printf("Creating test point set\n");
-    ps1 = parse_input_file("./inputs/graham_input2.txt");
-}
-
-
+/* Tests for turn type */
 Test(asserts, turn_test_1, .init = setup_general, .fini = teardown_general){
     GS_Turn gst = find_turn_type(ps1->points, ps1->points+1, ps1->points+2);
     cr_assert(GS_LeftTurn == gst, "Left not computed correctly");
@@ -67,4 +69,11 @@ Test(asserts, turn_test_2, .init = setup_general, .fini = teardown_general){
 Test(asserts, turn_test_3, .init = setup_general, .fini = teardown_general){
     GS_Turn gst = find_turn_type(ps1->points+2, ps1->points+3, ps1->points+4);
     cr_assert(GS_Inline == gst, "Inline not computed correctly");
+}
+
+
+/* Tests for finding lowest y-coord */
+Test(asserts, lowest_test_1, .init = setup_general, .fini = teardown_general){
+    Point* p = find_lowest_point(ps1);
+    cr_assert(p->yCoord == -1 && p->xCoord == -1, "Inline not computed correctly");
 }
