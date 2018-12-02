@@ -26,7 +26,7 @@ void print_points(PointSet* ps){
     int i;
     printf("%d\n", ps->num_points);
     for(i = 0; i < ps->num_points; i++){
-        printf("[%d,%d]\n", (ps->points+i)->xCoord, (ps->points+i)->yCoord);
+        printf("[%d,%d] -> %lf\n", (ps->points+i)->xCoord, (ps->points+i)->yCoord, (ps->points+i)->angle);
     }
 }
 
@@ -139,7 +139,7 @@ Point* find_lowest_point(PointSet* ps){
  */
 void sort_by_angle(Point* points, int left, int right){
     if (left < right) { 
-        int center = left+(right-left)/2; 
+        int center = left+((right-left)/2); 
         sort_by_angle(points, left, center); 
         sort_by_angle(points, center+1, right); 
   
@@ -163,13 +163,13 @@ void merge_halves(Point* points, int left, int center, int right){
     int n1 = center - left + 1;
     int n2 = right - center;
 
-    Point* tempP1 = malloc(n1*sizeof(Point));
-    Point* tempP2 = malloc(n2*sizeof(Point));
+    Point tempP1[n1];
+    Point tempP2[n2];
     for(i = 0; i< n1; i++){
         tempP1[i] = points[left + i];
     }
     for(j = 0; j< n2; j++){
-        tempP2[i] = points[center + left + j];
+        tempP2[j] = points[center + 1 + j];
     }
 
     i = 0;
@@ -199,9 +199,6 @@ void merge_halves(Point* points, int left, int center, int right){
         j++; 
         k++; 
     }
-
-    free(tempP1);
-    free(tempP2);
 }
 
 
