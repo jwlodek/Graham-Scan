@@ -1,10 +1,26 @@
+/**
+ * This file contains functions for solving the convex hull problem with the graham scan approach
+ * 
+ * Author: Jakub Wlodek
+ * Created on: Nov 30, 2018
+ */
 
+
+// standard includes
 #include <stdio.h>
 #include <stdlib.h>
-#include<string.h>
+#include <string.h>
 
+// custom header include
 #include "graham_scan.h"
 
+
+/**
+ * Simple function for printing all points in a set
+ * 
+ * @params: ps -> point set to print
+ * @return: void
+ */
 void print_points(PointSet* ps){
     int i;
     printf("%d\n", ps->num_points);
@@ -13,6 +29,13 @@ void print_points(PointSet* ps){
     }
 }
 
+
+/**
+ * Simple function for printing all points in a set to an output file
+ * 
+ * @params: ps -> point set to print
+ * @return: void
+ */
 void print_points_to_file(PointSet* ps, char* file_name){
     FILE* fp = fopen(file_name, "w");
     int i;
@@ -23,6 +46,20 @@ void print_points_to_file(PointSet* ps, char* file_name){
     fclose(fp);
 }
 
+
+/**
+ * Function that parses a user input file and populates a point set with the contents
+ * File format:
+ * 
+ * n
+ * [p1x,p1y]
+ * [p2x,p2y]
+ * 
+ * where n is the number of points, and pNx and pNy are the coordinates of points in the set
+ * 
+ * @params: filename    -> name of input file
+ * @return: ps          -> point set created from points taken from file
+ */
 PointSet* parse_input_file(char* file_name){
     printf("Parsing input file\n");
     FILE* fp = fopen(file_name, "r");
@@ -48,10 +85,21 @@ PointSet* parse_input_file(char* file_name){
         p->yCoord = atoi(second_token);
         counter++;
     }
-    print_points(ps);
+    //print_points(ps);
+    fclose(fp);
+    if(line) free(line);
     return ps;
 }
 
+
+/**
+ * Function that compares the contents of two point sets
+ * Used primarily for testing
+ * 
+ * @params: ps1 -> first point set
+ * @params: ps2 -> second point set
+ * @return: -1 if not the same, 0 if the same
+ */
 int compare_point_sets(PointSet* ps1, PointSet* ps2){
     //print_points(ps1);
     //print_points(ps2);

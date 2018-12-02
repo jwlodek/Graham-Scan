@@ -1,3 +1,15 @@
+/**
+ * File containing tests for graham scan
+ *  
+ * run tests with:
+ * make test
+ * ./gstest
+ * 
+ * Author: Jakub Wlodek
+ * Created on: Dec 2, 2018
+ */
+
+
 #include <criterion/criterion.h>
 #include <criterion/assert.h>
 #include <stdio.h>
@@ -8,6 +20,7 @@ PointSet* ps1;
 PointSet* ps2;
 PointSet* ps3;
 
+/* Setup and teardown for file parsing test */
 void setup_parse(void){
     printf("Creating test point set\n");
     ps1 = (PointSet*) calloc(1, sizeof(PointSet));
@@ -27,6 +40,7 @@ void teardown_parse(void){
     free(ps1);
 }
 
+/* File parsing test */
 Test(asserts, parse_input_test, .init = setup_parse, .fini = teardown_parse){
     PointSet* ps = parse_input_file("./inputs/graham_input1.txt");
     int eq = compare_point_sets(ps, ps1);

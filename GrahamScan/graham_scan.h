@@ -1,10 +1,17 @@
+/**
+ * Header file for Graham scan algorithm program
+ * 
+ * Author: Jakub Wlodek
+ * Created on: Nov 30, 2018
+ */
 
 
-
+// include guard
 #ifndef GRAHAM_SCAN_H
 #define GRAHAM_SCAN_H
 
 
+/* Structures used to represent a point and a set of points */
 typedef struct Point {
     int xCoord;
     int yCoord;
@@ -15,6 +22,7 @@ typedef struct PointSet {
     Point* points;
 } PointSet;
 
+/* function definitions */
 PointSet* parse_input_file(char* file_name);
 
 void print_points(PointSet* ps);
