@@ -135,6 +135,63 @@ PointSet* sort_by_angle(PointSet* ps){
 }
 
 
+/**
+ * Function for merging the two sub arrays in the point set. 
+ * Used by merge sort
+ * 
+ * @params: points  -> array of points in the point set
+ * @params: left    -> Left start point of the sub array
+ * @params: center  -> Center start point of the sub array
+ * @params: right   -> Right start point of the sub array
+ * @return: void
+ */
+void merge_halves(Point* points, int left, int center, int right){
+    int i, j, k;
+    int n1 = middle - left + 1;
+    int n2 = right - middle;
+
+    Point* tempP1 = malloc(n1*sizeof(Point));
+    Point* tempP2 = malloc(n2*sizeof(Point));
+    for(i = 0; i< n1; i++){
+        tempP1[i] = points[left + i];
+    }
+    for(j = 0; j< n2; j++){
+        tempP2[i] = points[middle + left + j]
+    }
+
+    i = 0;
+    j = 0;
+    k = left;
+
+    while(i < n1 && j< n2){
+        if(tempP1[i] <= tempP2[j]){
+            points[k] = tempP1[i];
+            i++;
+        }
+        else{
+            points[k] = tempP2[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) { 
+        points[k] = tempP1[i]; 
+        i++; 
+        k++; 
+    } 
+  
+    while (j < n2) { 
+        points[k] = tempP2[j]; 
+        j++; 
+        k++; 
+    }
+
+    free(tempP1);
+    free(tempP2);
+}
+
+
 //TODO
 PointSet* compute_convex_hull(PointSet* ps){
     printf("UNIMPLEMENTED\n");

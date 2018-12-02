@@ -88,6 +88,7 @@ Test(assert, angle_test_1, .init = setup_general, .fini = teardown_general){
     for(i = 0; i< ps1->num_points; i++){
         cr_assert(abs((ps1->points+i)->angle-angles[i]) < 0.00001, "Angle not computed correctly for point %d", i);
     }
+    free(ps2);
 }
 
 

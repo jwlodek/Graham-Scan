@@ -49,4 +49,6 @@ void compute_angles(PointSet* ps, Point* lowest);
 
 double distance_between(Point* p1, Point* p2);
 
+void merge_halves(Point* points, int left, int center, int right);
+
 #endif
