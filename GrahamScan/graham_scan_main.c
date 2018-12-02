@@ -25,7 +25,5 @@ int main(int argc, char** argv){
     if(inputPS == NULL){
         return -1;
     }
-    Point* p = find_lowest_point(inputPS);
-    compute_angles(inputPS, p);
-    print_points(inputPS);
+    PointSet* sol = compute_convex_hull(inputPS);
 }

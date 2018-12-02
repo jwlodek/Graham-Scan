@@ -202,9 +202,44 @@ void merge_halves(Point* points, int left, int center, int right){
 }
 
 
-//TODO
+/**
+ * Function for finding the convex hull of a set of points using the graham scan approach
+ * First, we find the lowest point.
+ * Then we sort the points based on the angles
+ * Next we use a stack to go through all of the points
+ * 
+ * 
+ */
 PointSet* compute_convex_hull(PointSet* ps){
-    printf("UNIMPLEMENTED\n");
+    Point* p = find_lowest_point(ps);
+    compute_angles(ps, p);
+    sort_by_angle(ps->points, 0, ps->num_points - 1);
+    PointSet* stackSet = (PointSet*) calloc(1, sizeof(PointSet));
+    stackSet->num_points = ps->num_points;
+    stackSet->points = malloc(stackSet->num_points * sizeof(Point));
+    Point* stack = stackSet->points;
+    int stack_top = 2;
+    stack[0] = ps->points[0];
+    stack[1] = ps->points[1];
+    stack[2] = ps->points[2];
+    int i;
+    for(i = 3; i < ps->num_points; i++){
+        while(find_turn_type(stack+stack_top-1, stack+stack_top, ps->points+i) == GS_RightTurn){
+            stack_top = stack_top - 1;
+        }
+        stack_top++;
+        stack[stack_top] = ps->points[i];
+    }
+    PointSet* convexHull = (PointSet*) calloc(1, sizeof(PointSet));
+    convexHull->num_points = stack_top;
+    int j;
+    for(j = 0; j < convexHull->num_points; j++){
+        convexHull->points[j] = stack[j];
+    }
+    free(stack);
+    free(stackSet);
+    print_points(convexHull);
+    return convexHull;
 }
 
 
