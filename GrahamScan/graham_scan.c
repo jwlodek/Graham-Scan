@@ -93,6 +93,21 @@ PointSet* parse_input_file(char* file_name){
 
 
 /**
+ * Function that decides if three points result in a right or left turn 
+ * Uses Slopes computed using the three points to do this
+ * 
+ * @params: p1 - p3     -> The three points
+ * @return GS_Turn      -> enum type for turn inline, left, or right
+ */
+GS_Turn find_turn_type(Point* p1, Point* p2, Point* p3){
+    int value = (p2->yCoord - p1->yCoord)*(p3->xCoord - p2->xCoord) -
+                (p2->xCoord - p1->xCoord)*(p3->yCoord - p2->yCoord);
+    if(value == 0) return GS_Inline;
+    return (value > 0) ? GS_RightTurn : GS_LeftTurn;
+}
+
+
+/**
  * Function that compares the contents of two point sets
  * Used primarily for testing
  * 
