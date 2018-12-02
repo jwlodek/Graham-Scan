@@ -77,3 +77,29 @@ Test(asserts, lowest_test_1, .init = setup_general, .fini = teardown_general){
     Point* p = find_lowest_point(ps1);
     cr_assert(p->yCoord == -1 && p->xCoord == -1, "Inline not computed correctly");
 }
+
+
+/* Tests for computing angles */
+Test(assert, angle_test_1, .init = setup_general, .fini = teardown_general){
+    Point* p = find_lowest_point(ps1);
+    compute_angles(ps1, p);
+    double angles[8] = {0.785398, 0.58803, 0.876058, 0.851966, 0.844154 ,1.446441, 2.03444, -1.0};
+    int i;
+    for(i = 0; i< ps1->num_points; i++){
+        cr_assert(abs((ps1->points+i)->angle-angles[i]) < 0.00001, "Angle not computed correctly for point %d", i);
+    }
+}
+
+
+/* Tests for sorting by angles */
+Test(assert, sort_test_1, .init = setup_general, .fini = teardown_general){
+    Point* p = find_lowest_point(ps1);
+    compute_angles(ps1, p);
+    ps2 = sort_by_angle(ps1);
+    double angles[8] = {-1.0, 0.58803, 0.785398, 0.844154, 0.851966, 0.876058, 1.446441, 2.03444};
+    int i;
+    for(i = 0; i< ps2->num_points; i++){
+        cr_assert(abs((ps2->points+i)->angle-angles[i]) < 0.00001, "Angles not sorted correctly");
+    }
+}
+

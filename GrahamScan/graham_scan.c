@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 // custom header include
 #include "graham_scan.h"
@@ -61,7 +62,7 @@ void print_points_to_file(PointSet* ps, char* file_name){
  * @return: ps          -> point set created from points taken from file
  */
 PointSet* parse_input_file(char* file_name){
-    printf("Parsing input file\n");
+    //printf("Parsing input file\n");
     FILE* fp = fopen(file_name, "r");
     if(fp == NULL){
         printf("ERROR Opening file\n");
@@ -125,6 +126,56 @@ Point* find_lowest_point(PointSet* ps){
         }
     }
     return p;
+}
+
+
+// TODO
+PointSet* sort_by_angle(PointSet* ps){
+    printf("UNIMPLEMENTED\n");
+}
+
+
+//TODO
+PointSet* compute_convex_hull(PointSet* ps){
+    printf("UNIMPLEMENTED\n");
+}
+
+
+/**
+ * Function that computes the angle between the starting point and every other point
+ * 
+ * @params: ps -> set of points
+ * @params: lowest -> lowest y-coord
+ * @return: void
+ */
+void compute_angles(PointSet* ps, Point* lowest){
+    int i;
+    for(i = 0; i< ps->num_points; i++){
+        Point* p = ps->points+i;
+        if(p->xCoord == lowest->xCoord && p->yCoord == lowest->yCoord){
+            p->angle = -1;
+        }
+        else{
+            //printf("opp %f, hyp %f\n", (double)(p->xCoord-lowest->xCoord), distance_between(lowest, p));
+            p->angle = acos((p->xCoord-lowest->xCoord)/distance_between(lowest, p));
+        }
+        //printf("%f\n", p->angle);
+    }
+}
+
+
+/**
+ * Distance formula for finding length of hypotenuse
+ * 
+ * @params: p1  -> starting point
+ * @params: p2  -> ending point
+ * @return distance between them
+ */
+double distance_between(Point* p1, Point*p2){
+    double nx = p1->xCoord - p2->xCoord;
+    double ny = p1->yCoord - p2->yCoord;
+    double h2 = pow(nx,2)+pow(ny,2);
+    return pow(h2, 0.5);
 }
 
 

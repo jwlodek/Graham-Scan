@@ -1,7 +1,7 @@
 gs:
 	gcc -c GrahamScan/graham_scan_main.c
 	gcc -c GrahamScan/graham_scan.c
-	gcc graham_scan_main.o graham_scan.o -o gs
+	gcc graham_scan_main.o graham_scan.o -o gs -lm
 	rm -f graham_scan.o graham_scan_main.o
 
 debug:
@@ -13,7 +13,7 @@ debug:
 test:
 	gcc -c GrahamScan/graham_scan.c
 	gcc -c tests/graham_scan_tests.c
-	gcc graham_scan_tests.o graham_scan.o -o gstest -lcriterion --coverage
+	gcc graham_scan_tests.o graham_scan.o -o gstest -lcriterion -lm --coverage
 	rm -f graham_scan.o
 	rm -f graham_scan_tests.o
 

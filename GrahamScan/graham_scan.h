@@ -20,6 +20,7 @@ typedef enum{
 typedef struct Point {
     int xCoord;
     int yCoord;
+    double angle;
 } Point;
 
 typedef struct PointSet {
@@ -44,5 +45,8 @@ PointSet* sort_by_angle(PointSet* ps);
 
 PointSet* compute_convex_hull(PointSet* ps);
 
+void compute_angles(PointSet* ps, Point* lowest);
+
+double distance_between(Point* p1, Point* p2);
 
 #endif
