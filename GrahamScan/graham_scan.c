@@ -30,6 +30,13 @@ void print_points(PointSet* ps){
     }
 }
 
+void print_stack(Point* p, int stack_size){
+    int i;
+    for(i = 0; i < stack_size; i++){
+        printf("[%d,%d] -> %lf\n", (p+i)->xCoord, (p+i)->yCoord, (p+i)->angle);
+    }
+}
+
 
 /**
  * Simple function for printing all points in a set to an output file
@@ -101,6 +108,7 @@ PointSet* parse_input_file(char* file_name){
  * @return GS_Turn      -> enum type for turn inline, left, or right
  */
 GS_Turn find_turn_type(Point* p1, Point* p2, Point* p3){
+    printf("checking points [%d,%d] [%d,%d] [%d,%d]\n", p1->xCoord, p1->yCoord, p2->xCoord, p2->yCoord, p3->xCoord, p3->yCoord);
     int value = (p2->yCoord - p1->yCoord)*(p3->xCoord - p2->xCoord) -
                 (p2->xCoord - p1->xCoord)*(p3->yCoord - p2->yCoord);
     if(value == 0) return GS_Inline;
@@ -214,6 +222,8 @@ PointSet* compute_convex_hull(PointSet* ps){
     Point* p = find_lowest_point(ps);
     compute_angles(ps, p);
     sort_by_angle(ps->points, 0, ps->num_points - 1);
+    print_points(ps);
+    printf("Graham Scan setup is complete\n");
     PointSet* stackSet = (PointSet*) calloc(1, sizeof(PointSet));
     stackSet->num_points = ps->num_points;
     stackSet->points = malloc(stackSet->num_points * sizeof(Point));
@@ -222,16 +232,26 @@ PointSet* compute_convex_hull(PointSet* ps){
     stack[0] = ps->points[0];
     stack[1] = ps->points[1];
     stack[2] = ps->points[2];
+    printf("Set up the stack\n");
     int i;
     for(i = 3; i < ps->num_points; i++){
         while(find_turn_type(stack+stack_top-1, stack+stack_top, ps->points+i) == GS_RightTurn){
+            printf("found right turn\n");
             stack_top = stack_top - 1;
         }
         stack_top++;
+        printf("Printing all points\n");
+        print_points(ps);
+        printf("Stack at i = %d\n", i);
+        print_stack(stack, stack_top);
         stack[stack_top] = ps->points[i];
+        printf("Stack after adding point [%d,%d]\n", ps->points[i].xCoord, ps->points[i].yCoord);
+        print_stack(stack, stack_top+1);
     }
+    printf("Done with graham scan");
     PointSet* convexHull = (PointSet*) calloc(1, sizeof(PointSet));
-    convexHull->num_points = stack_top;
+    convexHull->num_points = stack_top+1;
+    convexHull->points = malloc(convexHull->num_points*sizeof(Point));
     int j;
     for(j = 0; j < convexHull->num_points; j++){
         convexHull->points[j] = stack[j];

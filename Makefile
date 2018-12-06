@@ -7,7 +7,7 @@ gs:
 debug:
 	gcc -g -c GrahamScan/graham_scan_main.c
 	gcc -g -c GrahamScan/graham_scan.c
-	gcc -g graham_scan_main.o graham_scan.o -o gs
+	gcc -g graham_scan_main.o graham_scan.o -o gsdebug -lm
 	rm -f graham_scan.o graham_scan_main.o
 
 test:
@@ -20,4 +20,4 @@ test:
 clean:
 	rm -f gs
 	rm -f gstest
-	
+	rm -f gsdebug
