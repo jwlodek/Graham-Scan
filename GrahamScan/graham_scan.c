@@ -108,7 +108,7 @@ PointSet* parse_input_file(char* file_name){
  * @return GS_Turn      -> enum type for turn inline, left, or right
  */
 GS_Turn find_turn_type(Point* p1, Point* p2, Point* p3){
-    printf("checking points [%d,%d] [%d,%d] [%d,%d]\n", p1->xCoord, p1->yCoord, p2->xCoord, p2->yCoord, p3->xCoord, p3->yCoord);
+    //printf("checking points [%d,%d] [%d,%d] [%d,%d]\n", p1->xCoord, p1->yCoord, p2->xCoord, p2->yCoord, p3->xCoord, p3->yCoord);
     int value = (p2->yCoord - p1->yCoord)*(p3->xCoord - p2->xCoord) -
                 (p2->xCoord - p1->xCoord)*(p3->yCoord - p2->yCoord);
     if(value == 0) return GS_Inline;
@@ -213,17 +213,29 @@ void merge_halves(Point* points, int left, int center, int right){
 /**
  * Function for finding the convex hull of a set of points using the graham scan approach
  * First, we find the lowest point.
- * Then we sort the points based on the angles
- * Next we use a stack to go through all of the points
+ * Then we sort the points based on the angles using a separate function (mergesort).
+ * Next we use a stack to go through all of the points following the Graham scan approach.
+ * Starting with the first set of 3 points, we decide if they make a right or a left turn.
+ * If they make a right turn, then the center point cannot be in the convex hull. As a result, we
+ * shift the stack back one point, so now the first and third points and the previous first point make
+ * up the new 3-point set. We again compute if it is a right or left turn, and repeat until we find a 
+ * left or inline turn. If a left turn is found, the last point is added to the top of the stack, and the
+ * next point in order becomes the new third point. We continue this until all points have been visited at
+ * least one time.
  * 
- * 
+ * @params: ps          -> original point set read from a file
+ * @return: convexHull  -> Point set created by copying the final stack (Convex hull)
  */
 PointSet* compute_convex_hull(PointSet* ps){
+    printf("Finding the lowest point by y-coordinate...\n");
     Point* p = find_lowest_point(ps);
+    printf("Lowest point found.\n");
+    printf("Computing angles with lowest point...\n");
     compute_angles(ps, p);
+    printf("Angles computed. Sorting using merge-sort\n");
     sort_by_angle(ps->points, 0, ps->num_points - 1);
-    print_points(ps);
-    printf("Graham Scan setup is complete\n");
+    printf("Finished sorting points by angle\n");
+    //print_points(ps);
     PointSet* stackSet = (PointSet*) calloc(1, sizeof(PointSet));
     stackSet->num_points = ps->num_points;
     stackSet->points = malloc(stackSet->num_points * sizeof(Point));
@@ -232,23 +244,16 @@ PointSet* compute_convex_hull(PointSet* ps){
     stack[0] = ps->points[0];
     stack[1] = ps->points[1];
     stack[2] = ps->points[2];
-    printf("Set up the stack\n");
+    printf("Initialized the stack.\n");
     int i;
     for(i = 3; i < ps->num_points; i++){
         while(find_turn_type(stack+stack_top-1, stack+stack_top, ps->points+i) == GS_RightTurn){
-            printf("found right turn\n");
+            //printf("found right turn\n");
             stack_top = stack_top - 1;
         }
         stack_top++;
-        printf("Printing all points\n");
-        print_points(ps);
-        printf("Stack at i = %d\n", i);
-        print_stack(stack, stack_top);
         stack[stack_top] = ps->points[i];
-        printf("Stack after adding point [%d,%d]\n", ps->points[i].xCoord, ps->points[i].yCoord);
-        print_stack(stack, stack_top+1);
     }
-    printf("Done with graham scan");
     PointSet* convexHull = (PointSet*) calloc(1, sizeof(PointSet));
     convexHull->num_points = stack_top+1;
     convexHull->points = malloc(convexHull->num_points*sizeof(Point));
@@ -258,6 +263,8 @@ PointSet* compute_convex_hull(PointSet* ps){
     }
     free(stack);
     free(stackSet);
+    printf("Finished computing Convex Hull using Graham Scan.\n");
+    printf("Convex Hull (in counter-clockwise order:\n");
     print_points(convexHull);
     return convexHull;
 }
