@@ -17,6 +17,8 @@ int main(int argc, char** argv){
     printf("Starting graham scan algorithm\n");
     if(argc != 3){
         printf("Invalid Input, please only pass path to input file and path to output file.\n");
+        printf("FORMAT:\n");
+        printf("./gs INPUT_FILE_PATH OUTPUT_FILE_PATH");
         return -1;
     }
     char* input_file_name = argv[1];
@@ -26,4 +28,5 @@ int main(int argc, char** argv){
         return -1;
     }
     PointSet* sol = compute_convex_hull(inputPS);
+    print_points_to_file(sol, output_file_name);
 }
