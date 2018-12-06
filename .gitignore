@@ -2,3 +2,5 @@
 *.o
 gs
 gstest
+gsdebug
+outtest

@@ -29,4 +29,8 @@ int main(int argc, char** argv){
     }
     PointSet* sol = compute_convex_hull(inputPS);
     print_points_to_file(sol, output_file_name);
+    free(inputPS->points);
+    free(inputPS);
+    free(sol->points);
+    free(sol);
 }
