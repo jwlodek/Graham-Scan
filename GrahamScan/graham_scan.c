@@ -274,6 +274,53 @@ PointSet* compute_convex_hull(PointSet* ps){
 
 
 /**
+ * Function intended to remove 3-point colinear degenreacy from the convex hull.
+ * 
+ * TODO: This function doesnt have unit tests yet
+ * 
+ * @params: convexHull -> pointset corresponding to the convex hull in clockwise order
+ * @return: no_degenracy_hull -> convex hull with colinear points removed
+ */
+PointSet* remove_degenracy(PointSet* convexHull){
+    PointSet* no_degeneracy_hull = (PointSet*) calloc(1, sizeof(PointSet));
+    int numPoints = 0;
+    Point* tempPoints = (Point*) malloc( convexHull->num_points * sizeof(Point));
+    int i = 0;
+    int j = 1;
+    int k = 2;
+    while(k< convexHull->num_points){
+        GS_Turn turnType = find_turn_type(convexHull->points+(i), convexHull->points+(j), convexHull->points+k);
+        if(turnType != GS_Inline){
+            tempPoints[numPoints] = convexHull->points[i];
+            numPoints++;
+            tempPoints[numPoints] = convexHull->points[j];
+            numPoints++;
+            i = j;
+            j = k;
+            k++;
+        }
+        else{
+            j = k;
+            k++;
+            if(k == convexHull->num_points){
+                tempPoints[numPoints] = convexHull->points[i];
+                tempPoints[numPoints+1] = convexHull->points[j];
+                numPoints += 2;
+            }
+        }
+    }
+    int c;
+    no_degeneracy_hull->num_points = numPoints;
+    no_degeneracy_hull->points = (Point*) malloc(numPoints*sizeof(Point));
+    for(c=0; c< numPoints; c++){
+        no_degeneracy_hull->points[c] = tempPoints[c];
+    }
+    free(tempPoints);
+    return no_degeneracy_hull;
+}
+
+
+/**
  * Function that computes the angle between the starting point and every other point
  * 
  * @params: ps -> set of points

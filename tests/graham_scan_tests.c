@@ -47,7 +47,8 @@ void teardown_general(void){
 
 void setup_convex_hull(void){
     ps1 = parse_input_file("./inputs/blackboard_input.txt");
-    ps2 = parse_input_file("./outputs/blackboard_correct_output.txt");
+    /* use the reordered output file, because my output always starts from the lowest y-coord point */
+    ps2 = parse_input_file("./outputs/blackboard_output_reordered.txt");
 }
 
 void teardown_convex_hull(void){
@@ -107,9 +108,7 @@ Test(asserts, lowest_test_1, .init = setup_general, .fini = teardown_general){
 Test(asserts, lowest_test_2, .init = setup_convex_hull, .fini = teardown_convex_hull){
     printf("---------------------------------------\n");
     printf("Testing calulating lowest point by y-coord...\n");
-    print_points(ps1);
     Point* p = find_lowest_point(ps1);
-    printf("Lowest point found is %d, %d\n", p->xCoord, p->yCoord);
     cr_assert(p->yCoord == -200 && p->xCoord == -25, "Lowest point not found correctly");
     printf("Lowest point found.\n");
 }
