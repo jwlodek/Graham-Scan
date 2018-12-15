@@ -57,6 +57,22 @@ void teardown_convex_hull(void){
     free(ps1);
     free(ps2);
 }
+
+void setup_colinear(void){
+    ps1 = parse_input_file("./inputs/colinear_input.txt");
+    ps2 = parse_input_file("./outputs/colinear_expected.txt");
+    ps3 = parse_input_file("./outputs/colinear_handled_expected.txt");
+}
+
+void teardown_colinear(void){
+    free(ps1->points);
+    free(ps2->points);
+    free(ps3->points);
+    free(ps1);
+    free(ps2);
+    free(ps3);
+}
+
 /* ------------------------Unit Tests---------------------------------*/
 
 /* File parsing test */
@@ -165,10 +181,26 @@ Test(assert, no_colinear_test, .init = setup_convex_hull, .fini = teardown_conve
     printf("Testing convex hull with no colinearity...\n");
     PointSet* convex_hull = compute_convex_hull(ps1);
     PointSet* after_degeneracy = remove_degeneracy(convex_hull);
-    //free(convex_hull);
+    free(convex_hull);
     int eq = compare_point_sets(after_degeneracy, ps2);
-    //free(after_degeneracy);
+    free(after_degeneracy);
     cr_assert(eq == 0, "Non colinear CH affected by removing colinearity");
+    printf("Convex hull computed successfully.\n");
+}
+
+
+/* Test for handling colinear degeneracy */
+Test(assert, colinear_test, .init = setup_colinear, .fini = teardown_colinear){
+    printf("---------------------------------------\n");
+    printf("Testing convex hull with colinearity...\n");
+    PointSet* convex_hull = compute_convex_hull(ps1);
+    int eq1 = compare_point_sets(convex_hull, ps2);
+    cr_assert(eq1 == 0, "Didn't get excpected convex hull before degeneracy");
+    PointSet* after_degeneracy = remove_degeneracy(convex_hull);
+    free(convex_hull);
+    int eq2 = compare_point_sets(after_degeneracy, ps3);
+    free(after_degeneracy);
+    cr_assert(eq2 == 0, "Did not handle degeneracy successfully");
     printf("Convex hull computed successfully.\n");
 }
 

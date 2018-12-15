@@ -309,9 +309,8 @@ PointSet* remove_degeneracy(PointSet* convexHull){
             j = k;
             k++;
             if(k == convexHull->num_points){
-                tempPoints[numPoints] = convexHull->points[i];
-                tempPoints[numPoints+1] = convexHull->points[j];
-                numPoints += 2;
+                tempPoints[numPoints] = convexHull->points[j];
+                numPoints++;
             }
         }
     }
@@ -320,6 +319,7 @@ PointSet* remove_degeneracy(PointSet* convexHull){
     no_degeneracy_hull->points = (Point*) malloc(numPoints*sizeof(Point));
     for(c=0; c< numPoints; c++){
         no_degeneracy_hull->points[c] = tempPoints[c];
+        printf("Point added: (%d, %d)\n", tempPoints[c].xCoord, tempPoints[c].yCoord);
     }
     free(tempPoints);
     printf("Got to end of func\n");
