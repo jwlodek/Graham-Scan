@@ -127,7 +127,10 @@ Point* find_lowest_point(PointSet* ps){
     Point* p = ps->points;
     int i;
     for(i = 0; i < ps->num_points; i++){
-        if((ps->points+i)->yCoord <= p->yCoord){
+        if((ps->points+i)->yCoord < p->yCoord){
+            p = ps->points+i;
+        }
+        else if((ps->points+i)->yCoord == p->yCoord){
             if((ps->points+i)->xCoord < p->xCoord){
                 p = ps->points+i;
             }

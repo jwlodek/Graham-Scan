@@ -45,42 +45,80 @@ void teardown_general(void){
     free(ps1);
 }
 
+void setup_convex_hull(void){
+    ps1 = parse_input_file("./inputs/blackboard_input.txt");
+    ps2 = parse_input_file("./outputs/blackboard_correct_output.txt");
+}
+
+void teardown_convex_hull(void){
+    free(ps1->points);
+    free(ps2->points);
+    free(ps1);
+    free(ps2);
+}
 /* ------------------------Unit Tests---------------------------------*/
 
 /* File parsing test */
 Test(asserts, parse_input_test, .init = setup_parse, .fini = teardown_general){
+    printf("---------------------------------------\n");
+    printf("Testing input file parsing...\n");
     PointSet* ps = parse_input_file("./inputs/graham_input1.txt");
     int eq = compare_point_sets(ps, ps1);
     cr_assert(eq == 0, "Parsed point set not equal");
+    printf("Input file parsing passed.\n");
 }
 
 
 /* Tests for turn type */
 Test(asserts, turn_test_1, .init = setup_general, .fini = teardown_general){
+    printf("---------------------------------------\n");
+    printf("Testing calulating turn type...\n");
     GS_Turn gst = find_turn_type(ps1->points, ps1->points+1, ps1->points+2);
     cr_assert(GS_LeftTurn == gst, "Left not computed correctly");
+    printf("Turn type calculation passed.\n");
 }
 
 Test(asserts, turn_test_2, .init = setup_general, .fini = teardown_general){
+    printf("---------------------------------------\n");
+    printf("Testing calulating turn type...\n");
     GS_Turn gst = find_turn_type(ps1->points+1, ps1->points+2, ps1->points+3);
     cr_assert(GS_RightTurn == gst, "Right not computed correctly");
+    printf("Turn type calculation passed.\n");
 }
 
 Test(asserts, turn_test_3, .init = setup_general, .fini = teardown_general){
+    printf("---------------------------------------\n");
+    printf("Testing calulating turn type...\n");
     GS_Turn gst = find_turn_type(ps1->points+2, ps1->points+3, ps1->points+4);
     cr_assert(GS_Inline == gst, "Inline not computed correctly");
+    printf("Turn type calculation passed.\n");
 }
 
 
 /* Tests for finding lowest y-coord */
 Test(asserts, lowest_test_1, .init = setup_general, .fini = teardown_general){
+    printf("---------------------------------------\n");
+    printf("Testing calulating lowest point by y-coord...\n");
     Point* p = find_lowest_point(ps1);
-    cr_assert(p->yCoord == -1 && p->xCoord == -1, "Inline not computed correctly");
+    cr_assert(p->yCoord == -1 && p->xCoord == -1, "Lowest point not found correctly");
+    printf("Lowest point found.\n");
+}
+
+Test(asserts, lowest_test_2, .init = setup_convex_hull, .fini = teardown_convex_hull){
+    printf("---------------------------------------\n");
+    printf("Testing calulating lowest point by y-coord...\n");
+    print_points(ps1);
+    Point* p = find_lowest_point(ps1);
+    printf("Lowest point found is %d, %d\n", p->xCoord, p->yCoord);
+    cr_assert(p->yCoord == -200 && p->xCoord == -25, "Lowest point not found correctly");
+    printf("Lowest point found.\n");
 }
 
 
 /* Tests for computing angles */
 Test(assert, angle_test_1, .init = setup_general, .fini = teardown_general){
+    printf("---------------------------------------\n");
+    printf("Testing calulating angles for each point...\n");
     Point* p = find_lowest_point(ps1);
     compute_angles(ps1, p);
     double angles[8] = {0.785398, 0.58803, 0.876058, 0.851966, 0.844154 ,1.446441, 2.03444, -1.0};
@@ -88,11 +126,14 @@ Test(assert, angle_test_1, .init = setup_general, .fini = teardown_general){
     for(i = 0; i< ps1->num_points; i++){
         cr_assert(abs((ps1->points+i)->angle-angles[i]) < 0.00001, "Angle not computed correctly for point %d", i);
     }
+    printf("Angles computed successfully.\n");
 }
 
 
 /* Tests for sorting by angles */
 Test(assert, sort_test_1, .init = setup_general, .fini = teardown_general){
+    printf("---------------------------------------\n");
+    printf("Testing sorting points by angle...\n");
     Point* p = find_lowest_point(ps1);
     compute_angles(ps1, p);
     sort_by_angle(ps1->points, 0, ps1->num_points - 1);
@@ -103,5 +144,17 @@ Test(assert, sort_test_1, .init = setup_general, .fini = teardown_general){
         //printf("%lf\n", (ps1->points+i)->angle);
         cr_assert(abs((ps1->points+i)->angle-angles[i]) < 0.00001, "Angles not sorted correctly");
     }
+    printf("Points sorted correctly.\n");
+}
+
+
+/* Test against blackboard input/output */
+Test(assert, convex_hull_test, .init = setup_convex_hull, .fini = teardown_convex_hull){
+    printf("---------------------------------------\n");
+    printf("Testing convex hull graham scan on input set...\n");
+    PointSet* convex_hull = compute_convex_hull(ps1);
+    int eq = compare_point_sets(convex_hull, ps2);
+    cr_assert(eq == 0, "Convex Hull not computed correctly");
+    printf("Convex hull computed successfully.\n");
 }
 
