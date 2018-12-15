@@ -47,6 +47,8 @@ void sort_by_angle(Point* points, int left, int right);
 
 PointSet* compute_convex_hull(PointSet* ps);
 
+PointSet* remove_degeneracy(PointSet* convexHull);
+
 void compute_angles(PointSet* ps, Point* lowest);
 
 double distance_between(Point* p1, Point* p2);

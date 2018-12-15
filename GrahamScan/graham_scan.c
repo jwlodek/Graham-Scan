@@ -281,25 +281,31 @@ PointSet* compute_convex_hull(PointSet* ps){
  * @params: convexHull -> pointset corresponding to the convex hull in clockwise order
  * @return: no_degenracy_hull -> convex hull with colinear points removed
  */
-PointSet* remove_degenracy(PointSet* convexHull){
-    PointSet* no_degeneracy_hull = (PointSet*) calloc(1, sizeof(PointSet));
-    int numPoints = 0;
-    Point* tempPoints = (Point*) malloc( convexHull->num_points * sizeof(Point));
+PointSet* remove_degeneracy(PointSet* convexHull){
+    printf("entering func\n");
+    PointSet* no_degeneracy_hull = (PointSet*) malloc(sizeof(PointSet));
+    int numPoints = 1;
+    Point* tempPoints = (Point*) malloc(convexHull->num_points * sizeof(Point));
     int i = 0;
     int j = 1;
     int k = 2;
+    tempPoints[0] = convexHull->points[0];
     while(k< convexHull->num_points){
-        GS_Turn turnType = find_turn_type(convexHull->points+(i), convexHull->points+(j), convexHull->points+k);
+        GS_Turn turnType = find_turn_type(convexHull->points+(i), convexHull->points+j, convexHull->points+k);
         if(turnType != GS_Inline){
-            tempPoints[numPoints] = convexHull->points[i];
-            numPoints++;
+            printf("found non-colinear points\n");
             tempPoints[numPoints] = convexHull->points[j];
             numPoints++;
             i = j;
             j = k;
             k++;
+            if(k == convexHull->num_points){
+                tempPoints[numPoints] = convexHull->points[j];
+                numPoints++;
+            }
         }
         else{
+            printf("Found Colinear points\n");
             j = k;
             k++;
             if(k == convexHull->num_points){
@@ -316,6 +322,7 @@ PointSet* remove_degenracy(PointSet* convexHull){
         no_degeneracy_hull->points[c] = tempPoints[c];
     }
     free(tempPoints);
+    printf("Got to end of func\n");
     return no_degeneracy_hull;
 }
 

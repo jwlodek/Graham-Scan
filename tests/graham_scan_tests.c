@@ -153,7 +153,22 @@ Test(assert, convex_hull_test, .init = setup_convex_hull, .fini = teardown_conve
     printf("Testing convex hull graham scan on input set...\n");
     PointSet* convex_hull = compute_convex_hull(ps1);
     int eq = compare_point_sets(convex_hull, ps2);
-    cr_assert(eq == 0, "Convex Hull not computed correctly");
+    free(convex_hull);
+    cr_assert(eq == 0, "Convex Hull not computed correctly"); 
+    printf("Convex hull computed successfully.\n");
+}
+
+
+/* Test if removinf colinear points causes errors for sets of points without colinearity */
+Test(assert, no_colinear_test, .init = setup_convex_hull, .fini = teardown_convex_hull){
+    printf("---------------------------------------\n");
+    printf("Testing convex hull with no colinearity...\n");
+    PointSet* convex_hull = compute_convex_hull(ps1);
+    PointSet* after_degeneracy = remove_degeneracy(convex_hull);
+    //free(convex_hull);
+    int eq = compare_point_sets(after_degeneracy, ps2);
+    //free(after_degeneracy);
+    cr_assert(eq == 0, "Non colinear CH affected by removing colinearity");
     printf("Convex hull computed successfully.\n");
 }
 
