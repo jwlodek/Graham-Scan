@@ -1,5 +1,7 @@
 # Graham Scan
 
+Author: Jakub Wlodek
+
 Graham Scan algorithm implemented for my AMS 345/CSE 355 course at Stony Brook University
 
 I chose to write the implementations in C because of its execution speed,
@@ -21,12 +23,13 @@ and for all other points, I computed using arccos, because arccos gives a value 
 all of the angles will be in this range.
 4) Sort the points by the angle with the lowest point. Because the lowest point angle is -1 it will always be first. This
 is done using mergesort in O(nlogn) time.
-5) Use a stack to run the Graham Scan algorithm on the set of sorted points.
-6) Save the remaining stack to an output file.
+5) Use a stack to run the Graham Scan algorithm on the set of sorted points in O(n) time.
+6) Run a function to remove degeneracies (3-points colinear) from the output set
+7) Save the remaining stack to an output file.
 
 **Compiling/Running**
 
-**NOTE:** I have only tested program compilation on a Debian 9 machine using gcc version 6.3.*
+**NOTE:** I have only tested program compilation on a Debian 9 Linux machine using gcc version 6.3.*
 
 To compile the program, there are three options.  
 
@@ -68,14 +71,15 @@ and run it with:
 
 I was able to run my algorithm on a number of inputs and it was successfully able to compute the convex hull. One thing to note is that while it does print the points in counterclockwise order for the hull, it always starts with the lowest point as was found during the course of the algorithm execution.
 
-Here is the most recent output of executing the unit tests for my program:
+Here is the most recent output of executing the unit tests for my program.
+There are 14 unit tests total, about half test the helper functions, and the rest run the algorithm on certain input sets and test whether or not they match the expected result. All inputs and output files used for testing are available in their respective directories.
 ```
-jwlodek@debianVM:~/Documents/ProgrammingWorkspace/CompGeoAlgorithms$ ./gstest 
----------------------------------------
+jwlodek@debianVM:~/Documents/ProgrammingWorkspace/CompGeoAlgorithms$ ./gstest ---------------------------------------
 Testing calulating angles for each point...
 Angles computed successfully.
 ---------------------------------------
-Testing convex hull graham scan on input set...
+Testing convex hull on set with 3 colinear...
+Computing Convex hull using Graham scan...
 Finding the lowest point by y-coordinate...
 Lowest point found.
 Computing angles with lowest point...
@@ -83,20 +87,66 @@ Angles computed. Sorting using merge-sort
 Finished sorting points by angle
 Initialized the stack.
 Finished computing Convex Hull using Graham Scan.
-Convex Hull (in counter-clockwise order):
-12
-[-25,-200] -> -1.000000
-[25,-200] -> 0.000000
-[200,-125] -> 0.321751
-[200,125] -> 0.965252
-[25,200] -> 1.446441
-[-25,200] -> 1.570796
-[-150,125] -> 1.937970
-[-175,100] -> 2.034444
-[-200,50] -> 2.181522
-[-200,-50] -> 2.432966
-[-175,-100] -> 2.553590
-[-150,-125] -> 2.601173
+Handling degeneracies...
+Convex hull computed successfully.
+---------------------------------------
+Testing convex hull on set with colinear that include start point...
+Computing Convex hull using Graham scan...
+Finding the lowest point by y-coordinate...
+Lowest point found.
+Computing angles with lowest point...
+Angles computed. Sorting using merge-sort
+Finished sorting points by angle
+Initialized the stack.
+Finished computing Convex Hull using Graham Scan.
+Handling degeneracies...
+Convex hull computed successfully.
+---------------------------------------
+Testing convex hull on large point set w/ degeneracy...
+Computing Convex hull using Graham scan...
+Finding the lowest point by y-coordinate...
+Lowest point found.
+Computing angles with lowest point...
+Angles computed. Sorting using merge-sort
+Finished sorting points by angle
+Initialized the stack.
+Finished computing Convex Hull using Graham Scan.
+Handling degeneracies...
+Convex hull computed successfully.
+---------------------------------------
+Testing convex hull graham scan on blackboard input set...
+Computing Convex hull using Graham scan...
+Finding the lowest point by y-coordinate...
+Lowest point found.
+Computing angles with lowest point...
+Angles computed. Sorting using merge-sort
+Finished sorting points by angle
+Initialized the stack.
+Finished computing Convex Hull using Graham Scan.
+Convex hull computed successfully.
+---------------------------------------
+Testing large point set wo/ degeneracy...
+Computing Convex hull using Graham scan...
+Finding the lowest point by y-coordinate...
+Lowest point found.
+Computing angles with lowest point...
+Angles computed. Sorting using merge-sort
+Finished sorting points by angle
+Initialized the stack.
+Finished computing Convex Hull using Graham Scan.
+Handling degeneracies...
+Convex hull computed successfully.
+---------------------------------------
+Testing convex hull with on blackboard set w/ degeneracy handling...
+Computing Convex hull using Graham scan...
+Finding the lowest point by y-coordinate...
+Lowest point found.
+Computing angles with lowest point...
+Angles computed. Sorting using merge-sort
+Finished sorting points by angle
+Initialized the stack.
+Finished computing Convex Hull using Graham Scan.
+Handling degeneracies...
 Convex hull computed successfully.
 ---------------------------------------
 Testing sorting points by angle...
@@ -112,16 +162,15 @@ Testing input file parsing...
 Input file parsing passed.
 ---------------------------------------
 Testing calulating turn type...
-Turn type calculation passed.
+Left turn type calculation passed.
 ---------------------------------------
 Testing calulating turn type...
-Turn type calculation passed.
+Right turn type calculation passed.
 ---------------------------------------
 Testing calulating turn type...
-Turn type calculation passed.
-[====] Synthesis: Tested: 9 | Passing: 9 | Failing: 0 | Crashing: 0 
+Inline turn type calculation passed.
+[====] Synthesis: Tested: 14 | Passing: 14 | Failing: 0 | Crashing: 0 
 ```
-**Note** The numbers printed beside the points are the angles they made with the original, hence why the lowest point is given the arbitrary '-1' value.
 
 ### Unit testing
 
