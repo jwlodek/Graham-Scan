@@ -28,9 +28,12 @@ int main(int argc, char** argv){
         return -1;
     }
     PointSet* sol = compute_convex_hull(inputPS);
-    print_points_to_file(sol, output_file_name);
+    PointSet* afterDegeneracy = remove_degeneracy(sol);
+    print_points_to_file(afterDegeneracy, output_file_name);
     free(inputPS->points);
     free(inputPS);
     free(sol->points);
     free(sol);
+    free(afterDegeneracy->points);
+    free(afterDegeneracy);
 }

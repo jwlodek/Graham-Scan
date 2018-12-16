@@ -230,6 +230,7 @@ void merge_halves(Point* points, int left, int center, int right){
  * @return: convexHull  -> Point set created by copying the final stack (Convex hull)
  */
 PointSet* compute_convex_hull(PointSet* ps){
+    printf("Computing Convex hull using Graham scan...\n");
     printf("Finding the lowest point by y-coordinate...\n");
     Point* p = find_lowest_point(ps);
     printf("Lowest point found.\n");
@@ -267,8 +268,6 @@ PointSet* compute_convex_hull(PointSet* ps){
     free(stack);
     free(stackSet);
     printf("Finished computing Convex Hull using Graham Scan.\n");
-    printf("Convex Hull (in counter-clockwise order:\n");
-    print_points(convexHull);
     return convexHull;
 }
 
@@ -276,13 +275,14 @@ PointSet* compute_convex_hull(PointSet* ps){
 /**
  * Function intended to remove 3-point colinear degenreacy from the convex hull.
  * 
- * TODO: This function doesnt have unit tests yet
+ * Because the starting point is the lowest point in the set, we know that it cannto be the 
+ * middle point in three colinear points, so we need not account for that
  * 
  * @params: convexHull -> pointset corresponding to the convex hull in clockwise order
  * @return: no_degenracy_hull -> convex hull with colinear points removed
  */
 PointSet* remove_degeneracy(PointSet* convexHull){
-    printf("entering func\n");
+    printf("Handling degeneracies...\n");
     PointSet* no_degeneracy_hull = (PointSet*) malloc(sizeof(PointSet));
     int numPoints = 1;
     Point* tempPoints = (Point*) malloc(convexHull->num_points * sizeof(Point));
@@ -293,36 +293,47 @@ PointSet* remove_degeneracy(PointSet* convexHull){
     while(k< convexHull->num_points){
         GS_Turn turnType = find_turn_type(convexHull->points+(i), convexHull->points+j, convexHull->points+k);
         if(turnType != GS_Inline){
-            printf("found non-colinear points\n");
+            //printf("found non-colinear points\n");
             tempPoints[numPoints] = convexHull->points[j];
             numPoints++;
             i = j;
             j = k;
             k++;
             if(k == convexHull->num_points){
-                tempPoints[numPoints] = convexHull->points[j];
-                numPoints++;
+                GS_Turn wrap_around = find_turn_type(convexHull->points+i, convexHull->points+j, convexHull->points);
+                //printf("Points %d,%d\n", convexHull->points[i].xCoord, convexHull->points[i].yCoord);
+                //printf("Points %d,%d\n", convexHull->points[j].xCoord, convexHull->points[j].yCoord);
+                //printf("Points %d,%d\n", convexHull->points[0].xCoord, convexHull->points[0].yCoord);
+                if(wrap_around != GS_Inline){
+                    tempPoints[numPoints] = convexHull->points[j];
+                    numPoints++;
+                }
             }
         }
         else{
-            printf("Found Colinear points\n");
+            //printf("Found Colinear points\n");
             j = k;
             k++;
             if(k == convexHull->num_points){
-                tempPoints[numPoints] = convexHull->points[j];
-                numPoints++;
+                //case if CH wraps around and is  the three points are colinear at the end
+                GS_Turn wrap_around = find_turn_type(convexHull->points+i, convexHull->points+j, convexHull->points);
+                //printf("Points %d,%d\n", convexHull->points[i].xCoord, convexHull->points[i].yCoord);
+                //printf("Points %d,%d\n", convexHull->points[j].xCoord, convexHull->points[j].yCoord);
+                //printf("Points %d,%d\n", convexHull->points[0].xCoord, convexHull->points[0].yCoord);
+                if(wrap_around != GS_Inline){
+                    tempPoints[numPoints] = convexHull->points[j];
+                    numPoints++;
+                }
             }
         }
     }
     int c;
     no_degeneracy_hull->num_points = numPoints;
     no_degeneracy_hull->points = (Point*) malloc(numPoints*sizeof(Point));
-    for(c=0; c< numPoints; c++){
+    for(c = 0; c< numPoints; c++){
         no_degeneracy_hull->points[c] = tempPoints[c];
-        printf("Point added: (%d, %d)\n", tempPoints[c].xCoord, tempPoints[c].yCoord);
     }
     free(tempPoints);
-    printf("Got to end of func\n");
     return no_degeneracy_hull;
 }
 

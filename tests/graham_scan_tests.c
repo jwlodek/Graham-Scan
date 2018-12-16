@@ -73,6 +73,28 @@ void teardown_colinear(void){
     free(ps3);
 }
 
+void setup_colinear2(void){
+    ps1 = parse_input_file("./inputs/graham_input3.txt");
+    ps2 = parse_input_file("./outputs/graham_output3_expected.txt");
+}
+
+void setup_gs_input4(void){
+    ps1 = parse_input_file("./inputs/graham_input4.txt");
+    ps2 = parse_input_file("./outputs/graham_output4_expected.txt");
+}
+
+void setup_gs_input5(void){
+    ps1 = parse_input_file("./inputs/graham_input5.txt");
+    ps2 = parse_input_file("./outputs/graham_output5_expected.txt");
+}
+
+void teardown_2(void){
+    free(ps1->points);
+    free(ps2->points);
+    free(ps1);
+    free(ps2);
+}
+
 /* ------------------------Unit Tests---------------------------------*/
 
 /* File parsing test */
@@ -92,7 +114,7 @@ Test(asserts, turn_test_1, .init = setup_general, .fini = teardown_general){
     printf("Testing calulating turn type...\n");
     GS_Turn gst = find_turn_type(ps1->points, ps1->points+1, ps1->points+2);
     cr_assert(GS_LeftTurn == gst, "Left not computed correctly");
-    printf("Turn type calculation passed.\n");
+    printf("Left turn type calculation passed.\n");
 }
 
 Test(asserts, turn_test_2, .init = setup_general, .fini = teardown_general){
@@ -100,7 +122,7 @@ Test(asserts, turn_test_2, .init = setup_general, .fini = teardown_general){
     printf("Testing calulating turn type...\n");
     GS_Turn gst = find_turn_type(ps1->points+1, ps1->points+2, ps1->points+3);
     cr_assert(GS_RightTurn == gst, "Right not computed correctly");
-    printf("Turn type calculation passed.\n");
+    printf("Right turn type calculation passed.\n");
 }
 
 Test(asserts, turn_test_3, .init = setup_general, .fini = teardown_general){
@@ -108,7 +130,7 @@ Test(asserts, turn_test_3, .init = setup_general, .fini = teardown_general){
     printf("Testing calulating turn type...\n");
     GS_Turn gst = find_turn_type(ps1->points+2, ps1->points+3, ps1->points+4);
     cr_assert(GS_Inline == gst, "Inline not computed correctly");
-    printf("Turn type calculation passed.\n");
+    printf("Inline turn type calculation passed.\n");
 }
 
 
@@ -166,9 +188,10 @@ Test(assert, sort_test_1, .init = setup_general, .fini = teardown_general){
 /* Test against blackboard input/output */
 Test(assert, convex_hull_test, .init = setup_convex_hull, .fini = teardown_convex_hull){
     printf("---------------------------------------\n");
-    printf("Testing convex hull graham scan on input set...\n");
+    printf("Testing convex hull graham scan on blackboard input set...\n");
     PointSet* convex_hull = compute_convex_hull(ps1);
     int eq = compare_point_sets(convex_hull, ps2);
+    free(convex_hull->points);
     free(convex_hull);
     cr_assert(eq == 0, "Convex Hull not computed correctly"); 
     printf("Convex hull computed successfully.\n");
@@ -178,11 +201,13 @@ Test(assert, convex_hull_test, .init = setup_convex_hull, .fini = teardown_conve
 /* Test if removinf colinear points causes errors for sets of points without colinearity */
 Test(assert, no_colinear_test, .init = setup_convex_hull, .fini = teardown_convex_hull){
     printf("---------------------------------------\n");
-    printf("Testing convex hull with no colinearity...\n");
+    printf("Testing convex hull with on blackboard set w/ degeneracy handling...\n");
     PointSet* convex_hull = compute_convex_hull(ps1);
     PointSet* after_degeneracy = remove_degeneracy(convex_hull);
+    free(convex_hull->points);
     free(convex_hull);
     int eq = compare_point_sets(after_degeneracy, ps2);
+    free(after_degeneracy->points);
     free(after_degeneracy);
     cr_assert(eq == 0, "Non colinear CH affected by removing colinearity");
     printf("Convex hull computed successfully.\n");
@@ -192,15 +217,68 @@ Test(assert, no_colinear_test, .init = setup_convex_hull, .fini = teardown_conve
 /* Test for handling colinear degeneracy */
 Test(assert, colinear_test, .init = setup_colinear, .fini = teardown_colinear){
     printf("---------------------------------------\n");
-    printf("Testing convex hull with colinearity...\n");
+    printf("Testing convex hull on set with 3 colinear...\n");
     PointSet* convex_hull = compute_convex_hull(ps1);
     int eq1 = compare_point_sets(convex_hull, ps2);
     cr_assert(eq1 == 0, "Didn't get excpected convex hull before degeneracy");
     PointSet* after_degeneracy = remove_degeneracy(convex_hull);
+    //print_points(after_degeneracy);
+    free(convex_hull->points);
     free(convex_hull);
     int eq2 = compare_point_sets(after_degeneracy, ps3);
+    free(after_degeneracy->points);
     free(after_degeneracy);
     cr_assert(eq2 == 0, "Did not handle degeneracy successfully");
     printf("Convex hull computed successfully.\n");
 }
 
+/* Test for colinear degenracy where last point is in colinear set */
+Test(assert, colinear_test2, .init = setup_colinear2, .fini = teardown_2){
+    printf("---------------------------------------\n");
+    printf("Testing convex hull on set with colinear that include start point...\n");
+    PointSet* convex_hull = compute_convex_hull(ps1);
+    PointSet* after_degeneracy = remove_degeneracy(convex_hull);
+    //print_points(after_degeneracy);
+    free(convex_hull->points);
+    free(convex_hull);
+    int eq = compare_point_sets(after_degeneracy, ps2);
+    free(after_degeneracy->points);
+    free(after_degeneracy);
+    cr_assert(eq == 0, "Did not handle degeneracy successfully");
+    printf("Convex hull computed successfully.\n");
+}
+
+
+/* Test on medium size point set w/ degeneracy */
+Test(assert, colinear_test3, .init = setup_gs_input4, .fini = teardown_2){
+    printf("---------------------------------------\n");
+    printf("Testing convex hull on large point set w/ degeneracy...\n");
+    PointSet* convex_hull = compute_convex_hull(ps1);
+    PointSet* after_degeneracy = remove_degeneracy(convex_hull);
+    //print_points(after_degeneracy);
+    free(convex_hull->points);
+    free(convex_hull);
+    int eq = compare_point_sets(after_degeneracy, ps2);
+    free(after_degeneracy->points);
+    free(after_degeneracy);
+    cr_assert(eq == 0, "Did not handle degeneracy successfully");
+    printf("Convex hull computed successfully.\n");
+}
+
+
+
+/* Test on large point set */
+Test(assert, large_set_test, .init = setup_gs_input5, .fini = teardown_2){
+    printf("---------------------------------------\n");
+    printf("Testing large point set wo/ degeneracy...\n");
+    PointSet* convex_hull = compute_convex_hull(ps1);
+    PointSet* after_degeneracy = remove_degeneracy(convex_hull);
+    //print_points(after_degeneracy);
+    free(convex_hull->points);
+    free(convex_hull);
+    int eq = compare_point_sets(after_degeneracy, ps2);
+    free(after_degeneracy->points);
+    free(after_degeneracy);
+    cr_assert(eq == 0, "Did not compute CH correctly");
+    printf("Convex hull computed successfully.\n");
+}
