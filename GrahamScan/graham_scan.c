@@ -30,6 +30,14 @@ void print_points(PointSet* ps){
     }
 }
 
+
+/**
+ * Simple function for printing points in a stack
+ *
+ * @params: p -> array of points in stack
+ * @params: stack_size -> current size of the stack
+ * @return: void
+ */
 void print_stack(Point* p, int stack_size){
     int i;
     for(i = 0; i < stack_size; i++){
