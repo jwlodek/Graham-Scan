@@ -2,7 +2,7 @@
 
 Author: Jakub Wlodek
 
-Graham Scan algorithm implemented for my AMS 345/CSE 355 course at Stony Brook University
+Graham Scan algorithm implementation for my AMS 345/CSE 355 course at Stony Brook University
 
 I chose to write the implementations in C because of its execution speed,
 my familiarity with the language, and because I enjoy coding in it. I also
