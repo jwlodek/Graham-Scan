@@ -238,15 +238,15 @@ void merge_halves(Point* points, int left, int center, int right){
  * @return: convexHull  -> Point set created by copying the final stack (Convex hull)
  */
 PointSet* compute_convex_hull(PointSet* ps){
-    printf("Computing Convex hull using Graham scan...\n");
-    printf("Finding the lowest point by y-coordinate...\n");
+    //printf("Computing Convex hull using Graham scan...\n");
+    //printf("Finding the lowest point by y-coordinate...\n");
     Point* p = find_lowest_point(ps);
-    printf("Lowest point found.\n");
-    printf("Computing angles with lowest point...\n");
+    //printf("Lowest point found.\n");
+    //printf("Computing angles with lowest point...\n");
     compute_angles(ps, p);
-    printf("Angles computed. Sorting using merge-sort\n");
+    //printf("Angles computed. Sorting using merge-sort\n");
     sort_by_angle(ps->points, 0, ps->num_points - 1);
-    printf("Finished sorting points by angle\n");
+    //printf("Finished sorting points by angle\n");
     //print_points(ps);
     PointSet* stackSet = (PointSet*) calloc(1, sizeof(PointSet));
     stackSet->num_points = ps->num_points;
@@ -256,7 +256,7 @@ PointSet* compute_convex_hull(PointSet* ps){
     stack[0] = ps->points[0];
     stack[1] = ps->points[1];
     stack[2] = ps->points[2];
-    printf("Initialized the stack.\n");
+    //printf("Initialized the stack.\n");
     int i;
     for(i = 3; i < ps->num_points; i++){
         while(find_turn_type(stack+stack_top-1, stack+stack_top, ps->points+i) == GS_RightTurn){
@@ -290,7 +290,7 @@ PointSet* compute_convex_hull(PointSet* ps){
  * @return: no_degenracy_hull -> convex hull with colinear points removed
  */
 PointSet* remove_degeneracy(PointSet* convexHull){
-    printf("Handling degeneracies...\n");
+    //printf("Handling degeneracies...\n");
     PointSet* no_degeneracy_hull = (PointSet*) malloc(sizeof(PointSet));
     int numPoints = 1;
     Point* tempPoints = (Point*) malloc(convexHull->num_points * sizeof(Point));
@@ -309,9 +309,6 @@ PointSet* remove_degeneracy(PointSet* convexHull){
             k++;
             if(k == convexHull->num_points){
                 GS_Turn wrap_around = find_turn_type(convexHull->points+i, convexHull->points+j, convexHull->points);
-                //printf("Points %d,%d\n", convexHull->points[i].xCoord, convexHull->points[i].yCoord);
-                //printf("Points %d,%d\n", convexHull->points[j].xCoord, convexHull->points[j].yCoord);
-                //printf("Points %d,%d\n", convexHull->points[0].xCoord, convexHull->points[0].yCoord);
                 if(wrap_around != GS_Inline){
                     tempPoints[numPoints] = convexHull->points[j];
                     numPoints++;
@@ -325,9 +322,6 @@ PointSet* remove_degeneracy(PointSet* convexHull){
             if(k == convexHull->num_points){
                 //case if CH wraps around and is  the three points are colinear at the end
                 GS_Turn wrap_around = find_turn_type(convexHull->points+i, convexHull->points+j, convexHull->points);
-                //printf("Points %d,%d\n", convexHull->points[i].xCoord, convexHull->points[i].yCoord);
-                //printf("Points %d,%d\n", convexHull->points[j].xCoord, convexHull->points[j].yCoord);
-                //printf("Points %d,%d\n", convexHull->points[0].xCoord, convexHull->points[0].yCoord);
                 if(wrap_around != GS_Inline){
                     tempPoints[numPoints] = convexHull->points[j];
                     numPoints++;
